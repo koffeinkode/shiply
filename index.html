@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shiply</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f5f3f0;
+  --surface: #ffffff;
+  --border: #1a1a1a;
+  --text: #1a1a1a;
+  --text-muted: #6b6560;
+  --accent: #1a1a1a;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+  --warning: #c45a2d;
+  --success: #2d8a4e;
+}
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 12px;
+}
+
+.app-header {
+  background: var(--surface);
+  padding: 16px 28px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.app-header h1 {
+  font-size: 56px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.app-header .tagline {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  padding: 20px 24px;
+}
+
+.panel h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+textarea {
+  width: 100%;
+  height: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 10px;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--border);
+}
+
+textarea::placeholder {
+  color: #aaa5a0;
+}
+
+.counter {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.counter strong {
+  color: var(--text);
+}
+
+.drop-zone {
+  border: 1px dashed var(--border);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.1s;
+  position: relative;
+  background: var(--bg);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+  background: var(--border);
+  color: var(--surface);
+}
+
+.drop-zone.has-file {
+  border-style: solid;
+  background: var(--surface);
+  cursor: default;
+}
+
+.drop-zone.has-file:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.drop-zone .drop-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.drop-zone .drop-text {
+  font-size: 13px;
+  display: block;
+}
+
+.drop-zone .drop-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  display: block;
+}
+
+.drop-zone .drop-filename {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+  display: block;
+}
+
+.drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.drop-zone.has-file input[type="file"] {
+  display: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.1s;
+  color: var(--text);
+}
+
+.btn:hover {
+  background: var(--border);
+  color: var(--surface);
+}
+
+.btn-primary {
+  background: var(--border);
+  color: var(--surface);
+}
+
+.btn-primary:hover {
+  background: var(--surface);
+  color: var(--border);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.btn-primary:disabled:hover {
+  background: var(--border);
+  color: var(--surface);
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.btn-danger {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.btn-danger:hover {
+  background: var(--warning);
+  color: var(--surface);
+}
+
+.action-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  padding: 12px 20px;
+  text-align: center;
+  flex: 1;
+  min-width: 140px;
+}
+
+.summary-item .num {
+  font-size: 28px;
+  font-weight: 700;
+  display: block;
+}
+
+.summary-item .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+.summary-item.warning {
+  border-color: var(--warning);
+}
+
+.summary-item.warning .num {
+  color: var(--warning);
+}
+
+.summary-item.success .num {
+  color: var(--success);
+}
+
+.warning-box {
+  background: var(--surface);
+  border: 2px solid var(--warning);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.result-table-wrap {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.result-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+}
+
+.result-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e8e5e2;
+}
+
+.result-table tr:nth-child(even) td {
+  background: var(--bg);
+}
+
+.result-table tr.drag-over td {
+  background: #d4d0cc;
+}
+
+.code-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.code-tag {
+  font-weight: 500;
+  padding: 2px 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  cursor: grab;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.code-tag:active {
+  cursor: grabbing;
+}
+
+.code-tag.dragging {
+  opacity: 0.4;
+}
+
+.code-tag.empty {
+  color: var(--warning);
+  border-color: var(--warning);
+  border-style: dashed;
+  background: transparent;
+  cursor: default;
+  font-style: italic;
+}
+
+.code-clear {
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.code-clear:hover {
+  color: var(--warning);
+}
+
+.export-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.checkbox-row input[type="checkbox"] {
+  accent-color: var(--border);
+  width: 16px;
+  height: 16px;
+}
+
+#result-phase {
+  display: none;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-decoration: underline;
+}
+
+.remove-file-btn:hover {
+  color: var(--warning);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--border);
+  color: var(--surface);
+  padding: 10px 24px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid var(--border);
+  transition: transform 0.2s;
+  z-index: 100;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 700px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+  .app-header h1 {
+    font-size: 32px;
+  }
+  .summary {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Shiply</h1>
+  <span class="tagline">Kobler Postens frimerkekoder på mottakerlisten din enkelt og raskt</span>
+</header>
+
+<div class="main">
+
+  <!-- INPUT PHASE -->
+  <div id="input-phase">
+    <div class="input-grid">
+      <div class="panel">
+        <h3>Frimerkekoder</h3>
+        <textarea id="code-input" placeholder="Lim inn frimerkekoder her...&#10;&#10;Kodene splittes automatisk på 0582"></textarea>
+        <div class="counter">Koder oppdaget: <strong id="code-count">0</strong></div>
+      </div>
+      <div class="panel">
+        <h3>Mottakerliste (CSV)</h3>
+        <div class="drop-zone" id="csv-drop">
+          <span class="drop-icon">+</span>
+          <span class="drop-text">Slipp CSV-fil her</span>
+          <span class="drop-hint">eller klikk for å velge fil</span>
+          <input type="file" id="csv-file" accept=".csv,.txt">
+        </div>
+        <div class="counter">Mottakere: <strong id="recipient-count">0</strong></div>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-process" disabled>Samle</button>
+    </div>
+  </div>
+
+  <!-- RESULT PHASE -->
+  <div id="result-phase">
+    <div class="summary" id="summary"></div>
+    <div id="warnings"></div>
+
+    <div class="result-table-wrap">
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Navn</th>
+            <th>Postnr</th>
+            <th>Sted</th>
+            <th>Frimerkekode</th>
+          </tr>
+        </thead>
+        <tbody id="result-body"></tbody>
+      </table>
+    </div>
+
+    <div id="incomplete-check" style="display:none">
+      <label class="checkbox-row">
+        <input type="checkbox" id="accept-incomplete">
+        <span>Eksporter likevel (ufullstendig liste)</span>
+      </label>
+    </div>
+
+    <div class="export-row">
+      <button class="btn btn-primary" id="btn-excel" disabled>Eksporter Excel</button>
+      <button class="btn btn-primary" id="btn-csv-export" disabled>Eksporter CSV</button>
+      <button class="btn" id="btn-copy">Kopier koder</button>
+      <button class="btn" id="btn-export-codes">Eksporter kun koder</button>
+      <button class="btn btn-danger" id="btn-reset">Start på nytt</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const state = {
+  inputText: '',
+  parsedCodes: [],
+  customerHeaders: [],
+  customerRows: [],
+  assignedCodes: [],
+  customerFileName: null,
+  errorMessage: null,
+  warningMessage: null,
+  showResults: false,
+  acceptIncomplete: false,
+  draggedIndex: null
+};
+
+// DOM refs
+const codeInput = document.getElementById('code-input');
+const codeCount = document.getElementById('code-count');
+const csvDrop = document.getElementById('csv-drop');
+const csvFile = document.getElementById('csv-file');
+const recipientCount = document.getElementById('recipient-count');
+const btnProcess = document.getElementById('btn-process');
+const inputPhase = document.getElementById('input-phase');
+const resultPhase = document.getElementById('result-phase');
+const resultBody = document.getElementById('result-body');
+const summaryEl = document.getElementById('summary');
+const warningsEl = document.getElementById('warnings');
+const btnExcel = document.getElementById('btn-excel');
+const btnCsvExport = document.getElementById('btn-csv-export');
+const btnCopy = document.getElementById('btn-copy');
+const btnExportCodes = document.getElementById('btn-export-codes');
+const btnReset = document.getElementById('btn-reset');
+const acceptIncompleteCheck = document.getElementById('accept-incomplete');
+const incompleteCheckDiv = document.getElementById('incomplete-check');
+const toastEl = document.getElementById('toast');
+
+// Code parsing
+function detectCodeCount(text) {
+  if (!text.trim()) return 0;
+  const cleaned = text.replace(/\s+/g, '').toUpperCase();
+  const parts = cleaned.split('0582').filter(p => p.length > 0);
+  return parts.length;
+}
+
+function parseCodes(text) {
+  const cleaned = text.replace(/\s+/g, '').toUpperCase();
+  const parts = cleaned.split('0582').filter(p => p.length > 0);
+  const codes = parts.map(p => '0582' + p);
+  const regex = /^0582[A-Z0-9]{4,}[A-Z0-9\-]*$/;
+  return codes.filter(c => c.length >= 8 && regex.test(c));
+}
+
+// CSV parsing
+function cleanField(field) {
+  const trimmed = field.trim();
+  let result = '';
+  for (const char of trimmed) {
+    const code = char.codePointAt(0);
+    if (code === 9 || code === 10 || (code >= 0x20 && code < 0x200F) || code > 0x200F) {
+      result += char;
+    }
+  }
+  return result;
+}
+
+function parseCSVLine(line, separator) {
+  const fields = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === separator) {
+        fields.push(cleanField(current));
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  fields.push(cleanField(current));
+  return fields;
+}
+
+function isHeaderRow(fields) {
+  const headerKeywords = ['navn', 'name', 'stilling', 'title', 'postnr', 'postnummer', 'poststed', 'adresse', 'address'];
+  const lower = fields.map(f => f.toLowerCase());
+  return lower.some(f => headerKeywords.some(k => f.includes(k)));
+}
+
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length === 0) return { headers: [], rows: [] };
+
+  const separator = lines[0].includes(';') ? ';' : ',';
+  const headerFields = parseCSVLine(lines[0], separator);
+
+  let startIndex = 0;
+  let headers = [];
+
+  if (isHeaderRow(headerFields)) {
+    headers = headerFields;
+    startIndex = 1;
+  } else {
+    headers = headerFields.map((_, i) => `Kolonne ${i + 1}`);
+  }
+
+  const rows = [];
+  for (let i = startIndex; i < lines.length; i++) {
+    const fields = parseCSVLine(lines[i], separator);
+    while (fields.length < headers.length) fields.push('');
+    rows.push(fields);
+  }
+
+  return { headers, rows };
+}
+
+// Live code count
+codeInput.addEventListener('input', () => {
+  state.inputText = codeInput.value;
+  codeCount.textContent = detectCodeCount(state.inputText);
+  updateProcessButton();
+});
+
+// Also allow dropping text into textarea
+codeInput.addEventListener('drop', (e) => {
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    e.preventDefault();
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      codeInput.value = ev.target.result;
+      codeInput.dispatchEvent(new Event('input'));
+    };
+    reader.readAsText(file);
+  }
+});
+
+// CSV file handling
+csvFile.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) loadCSVFile(e.target.files[0]);
+});
+
+csvDrop.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  csvDrop.classList.add('drag-over');
+});
+
+csvDrop.addEventListener('dragleave', () => {
+  csvDrop.classList.remove('drag-over');
+});
+
+csvDrop.addEventListener('drop', (e) => {
+  e.preventDefault();
+  csvDrop.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    const file = files[0];
+    if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+      loadCSVFile(file);
+    }
+  }
+});
+
+function loadCSVFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const result = parseCSV(e.target.result);
+    state.customerHeaders = result.headers;
+    state.customerRows = result.rows;
+    state.customerFileName = file.name;
+
+    csvDrop.classList.add('has-file');
+    csvDrop.innerHTML = `
+      <span class="drop-icon">&#10003;</span>
+      <span class="drop-filename">${file.name}</span>
+      <span class="drop-hint">${state.customerRows.length} mottakere</span>
+      <button class="remove-file-btn" onclick="removeCSV(event)">Fjern fil</button>
+    `;
+    recipientCount.textContent = state.customerRows.length;
+    updateProcessButton();
+  };
+  reader.readAsText(file);
+}
+
+function removeCSV(e) {
+  e.stopPropagation();
+  state.customerHeaders = [];
+  state.customerRows = [];
+  state.customerFileName = null;
+  csvDrop.classList.remove('has-file');
+  csvDrop.innerHTML = `
+    <span class="drop-icon">+</span>
+    <span class="drop-text">Slipp CSV-fil her</span>
+    <span class="drop-hint">eller klikk for å velge fil</span>
+    <input type="file" id="csv-file" accept=".csv,.txt">
+  `;
+  document.getElementById('csv-file').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) loadCSVFile(e.target.files[0]);
+  });
+  recipientCount.textContent = '0';
+  updateProcessButton();
+}
+
+function updateProcessButton() {
+  const hasCodes = detectCodeCount(state.inputText) > 0;
+  const hasRecipients = state.customerRows.length > 0;
+  btnProcess.disabled = !(hasCodes && hasRecipients);
+}
+
+// Process
+btnProcess.addEventListener('click', () => {
+  state.parsedCodes = parseCodes(state.inputText);
+  state.errorMessage = null;
+  state.warningMessage = null;
+
+  // Assign codes
+  state.assignedCodes = state.customerRows.map((_, i) =>
+    i < state.parsedCodes.length ? state.parsedCodes[i] : ''
+  );
+
+  // Check for missing
+  if (state.parsedCodes.length < state.customerRows.length) {
+    const missing = state.customerRows.length - state.parsedCodes.length;
+    state.errorMessage = `Advarsel: ${missing} mottaker${missing === 1 ? '' : 'e'} mangler frimerkekode.`;
+  }
+
+  // Check for duplicates
+  const counts = {};
+  state.parsedCodes.forEach(c => { counts[c] = (counts[c] || 0) + 1; });
+  const dupes = Object.entries(counts).filter(([, v]) => v > 1);
+  if (dupes.length > 0) {
+    state.warningMessage = 'Duplikater funnet: ' + dupes.map(([k, v]) => `${k} (x${v})`).join(', ');
+  }
+
+  state.showResults = true;
+  state.acceptIncomplete = false;
+  renderResults();
+});
+
+function renderResults() {
+  inputPhase.style.display = 'none';
+  resultPhase.style.display = 'block';
+
+  const assignedCount = state.assignedCodes.filter(c => c !== '').length;
+  const missingCount = state.assignedCodes.filter(c => c === '').length;
+  const unusedCount = Math.max(0, state.parsedCodes.length - state.customerRows.length);
+
+  summaryEl.innerHTML = `
+    <div class="summary-item success"><span class="num">${assignedCount}</span><span class="label">Tildelt</span></div>
+    <div class="summary-item${missingCount > 0 ? ' warning' : ''}"><span class="num">${missingCount}</span><span class="label">Mangler kode</span></div>
+    <div class="summary-item"><span class="num">${unusedCount}</span><span class="label">Ubrukte koder</span></div>
+    <div class="summary-item"><span class="num">${state.parsedCodes.length}</span><span class="label">Totalt koder</span></div>
+  `;
+
+  let warningHTML = '';
+  if (state.errorMessage) {
+    warningHTML += `<div class="warning-box">${state.errorMessage}</div>`;
+  }
+  if (state.warningMessage) {
+    warningHTML += `<div class="warning-box">${state.warningMessage}</div>`;
+  }
+  warningsEl.innerHTML = warningHTML;
+
+  renderTable();
+
+  const hasIncomplete = state.assignedCodes.some(c => c === '');
+  incompleteCheckDiv.style.display = hasIncomplete ? 'block' : 'none';
+  acceptIncompleteCheck.checked = state.acceptIncomplete;
+  updateExportButtons();
+}
+
+function renderTable() {
+  let html = '';
+  state.customerRows.forEach((row, i) => {
+    const name = row[0] || '';
+    const postnr = row[3] || '';
+    const sted = row[4] || '';
+    const code = state.assignedCodes[i] || '';
+
+    html += `<tr data-index="${i}">
+      <td>${i + 1}</td>
+      <td>${escapeHTML(name)}</td>
+      <td>${escapeHTML(postnr)}</td>
+      <td>${escapeHTML(sted)}</td>
+      <td><div class="code-cell">`;
+
+    if (code) {
+      html += `<span class="code-tag" draggable="true" data-index="${i}">${escapeHTML(code)}</span>`;
+      html += `<button class="code-clear" onclick="clearCode(${i})" title="Fjern kode">&times;</button>`;
+    } else {
+      html += `<span class="code-tag empty">Ingen kode</span>`;
+    }
+
+    html += `</div></td></tr>`;
+  });
+  resultBody.innerHTML = html;
+  attachDragHandlers();
+}
+
+function attachDragHandlers() {
+  const tags = resultBody.querySelectorAll('.code-tag[draggable]');
+  tags.forEach(tag => {
+    tag.addEventListener('dragstart', (e) => {
+      state.draggedIndex = parseInt(tag.dataset.index);
+      tag.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', tag.dataset.index);
+    });
+    tag.addEventListener('dragend', () => {
+      tag.classList.remove('dragging');
+      state.draggedIndex = null;
+      resultBody.querySelectorAll('tr').forEach(tr => tr.classList.remove('drag-over'));
+    });
+  });
+
+  const rows = resultBody.querySelectorAll('tr');
+  rows.forEach(row => {
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('drag-over');
+    });
+    row.addEventListener('drop', (e) => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      const from = state.draggedIndex;
+      const to = parseInt(row.dataset.index);
+      if (from !== null && from !== to) {
+        const temp = state.assignedCodes[from];
+        state.assignedCodes[from] = state.assignedCodes[to];
+        state.assignedCodes[to] = temp;
+        renderTable();
+        updateExportButtons();
+      }
+    });
+  });
+}
+
+function clearCode(index) {
+  state.assignedCodes[index] = '';
+  renderTable();
+  updateExportButtons();
+
+  const missingCount = state.assignedCodes.filter(c => c === '').length;
+  incompleteCheckDiv.style.display = missingCount > 0 ? 'block' : 'none';
+}
+
+function updateExportButtons() {
+  const hasIncomplete = state.assignedCodes.some(c => c === '');
+  const canExport = !hasIncomplete || state.acceptIncomplete;
+  btnExcel.disabled = !canExport;
+  btnCsvExport.disabled = !canExport;
+}
+
+acceptIncompleteCheck.addEventListener('change', () => {
+  state.acceptIncomplete = acceptIncompleteCheck.checked;
+  updateExportButtons();
+});
+
+// Excel export (SpreadsheetML XML)
+btnExcel.addEventListener('click', () => {
+  const headers = [...state.customerHeaders, 'Frimerkekode'];
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<?mso-application progid="Excel.Sheet"?>\n';
+  xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n';
+  xml += ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+  xml += '<Styles><Style ss:ID="Bold"><Font ss:Bold="1"/></Style></Styles>\n';
+  xml += '<Worksheet ss:Name="Mottakerliste"><Table>\n';
+
+  xml += '<Row ss:StyleID="Bold">';
+  headers.forEach(h => {
+    xml += `<Cell><Data ss:Type="String">${escapeXML(h)}</Data></Cell>`;
+  });
+  xml += '</Row>\n';
+
+  state.customerRows.forEach((row, i) => {
+    xml += '<Row>';
+    row.forEach(field => {
+      xml += `<Cell><Data ss:Type="String">${escapeXML(field)}</Data></Cell>`;
+    });
+    xml += `<Cell><Data ss:Type="String">${escapeXML(state.assignedCodes[i] || '')}</Data></Cell>`;
+    xml += '</Row>\n';
+  });
+
+  xml += '</Table></Worksheet></Workbook>';
+
+  downloadBlob(xml, 'mottakerliste_med_frimerker.xls', 'application/vnd.ms-excel');
+  showToast('Excel-fil lastet ned');
+});
+
+// CSV export
+btnCsvExport.addEventListener('click', () => {
+  const headers = [...state.customerHeaders, 'Frimerkekode'];
+  let csv = headers.map(escapeCSVField).join(',') + '\n';
+
+  state.customerRows.forEach((row, i) => {
+    const fields = [...row, state.assignedCodes[i] || ''];
+    csv += fields.map(escapeCSVField).join(',') + '\n';
+  });
+
+  downloadBlob(csv, 'mottakerliste_med_frimerker.csv', 'text/csv;charset=utf-8');
+  showToast('CSV-fil lastet ned');
+});
+
+// Copy codes (3-line format)
+btnCopy.addEventListener('click', () => {
+  const codes = state.assignedCodes.filter(c => c !== '');
+  const formatted = codes.map(formatCodeThreeLines).join('\n');
+  navigator.clipboard.writeText(formatted).then(() => {
+    showToast(`${codes.length} koder kopiert`);
+  });
+});
+
+// Export codes only
+btnExportCodes.addEventListener('click', () => {
+  const codes = state.assignedCodes.filter(c => c !== '');
+  const formatted = codes.map(formatCodeThreeLines).join('\n');
+  downloadBlob(formatted, 'frimerkekoder.csv', 'text/csv;charset=utf-8');
+  showToast('Koder eksportert');
+});
+
+function formatCodeThreeLines(code) {
+  const line1 = code.substring(0, 4);
+  const line2 = code.substring(4, 8);
+  const line3 = code.substring(8);
+  return `"${line1}\n${line2}\n${line3}"`;
+}
+
+// Reset
+btnReset.addEventListener('click', () => {
+  state.inputText = '';
+  state.parsedCodes = [];
+  state.customerHeaders = [];
+  state.customerRows = [];
+  state.assignedCodes = [];
+  state.customerFileName = null;
+  state.errorMessage = null;
+  state.warningMessage = null;
+  state.showResults = false;
+  state.acceptIncomplete = false;
+
+  codeInput.value = '';
+  codeCount.textContent = '0';
+  recipientCount.textContent = '0';
+  removeCSV(new Event('click'));
+  btnProcess.disabled = true;
+
+  resultPhase.style.display = 'none';
+  inputPhase.style.display = 'block';
+});
+
+// Helpers
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function escapeXML(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function escapeCSVField(field) {
+  if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+    return '"' + field.replace(/"/g, '""') + '"';
+  }
+  return field;
+}
+
+function downloadBlob(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+let toastTimeout;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
