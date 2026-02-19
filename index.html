@@ -488,6 +488,7 @@ textarea::placeholder {
         <h3>Frimerkekoder</h3>
         <textarea id="code-input" placeholder="Lim inn frimerkekoder her...&#10;&#10;Kodene deles opp automatisk på 0582"></textarea>
         <div class="counter">Koder oppdaget: <strong id="code-count">0</strong></div>
+        <button class="btn btn-sm" style="margin-top:8px" onclick="loadDemoCodes()">Last inn eksempelkoder</button>
       </div>
       <div class="panel">
         <h3>Mottakerliste (CSV)</h3>
@@ -497,6 +498,7 @@ textarea::placeholder {
           <span class="drop-hint">eller klikk for å velge fil</span>
           <input type="file" id="csv-file" accept=".csv,.txt">
         </div>
+        <button class="btn btn-sm" style="margin-top:8px" onclick="loadDemoCSV()">Last inn eksempel-CSV</button>
         <div class="counter">Mottakere: <strong id="recipient-count">0</strong></div>
       </div>
     </div>
@@ -1043,6 +1045,26 @@ function downloadBlob(content, filename, mimeType) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function loadDemoCodes() {
+  fetch('demo_frimerkekoder.txt')
+    .then(r => r.text())
+    .then(text => {
+      codeInput.value = text;
+      codeInput.dispatchEvent(new Event('input'));
+    })
+    .catch(() => {});
+}
+
+function loadDemoCSV() {
+  fetch('demo_mottakere.csv')
+    .then(r => r.blob())
+    .then(blob => {
+      const file = new File([blob], 'demo_mottakere.csv', { type: 'text/csv' });
+      loadCSVFile(file);
+    })
+    .catch(() => {});
 }
 
 let toastTimeout;
