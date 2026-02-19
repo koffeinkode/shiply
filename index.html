@@ -537,6 +537,7 @@ textarea::placeholder {
     <div class="export-row">
       <button class="btn btn-primary" id="btn-excel" disabled>Eksporter Excel</button>
       <button class="btn btn-primary" id="btn-csv-export" disabled>Eksporter CSV</button>
+      <button class="btn" id="btn-preview-pdf" onclick="previewPDF()">Forhåndsvis PDF</button>
       <button class="btn" id="btn-copy">Kopier koder</button>
       <button class="btn" id="btn-export-codes">Eksporter kun koder</button>
       <button class="btn btn-danger" id="btn-reset">Start på nytt</button>
@@ -1045,6 +1046,120 @@ function downloadBlob(content, filename, mimeType) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function previewPDF() {
+  const date = new Date().toLocaleDateString('nb-NO');
+  let rows = '';
+  state.customerRows.forEach((row, i) => {
+    const name = escapeHTML(row[0] || '');
+    const postnr = escapeHTML(row[3] || '');
+    const sted = escapeHTML(row[4] || '');
+    const code = state.assignedCodes[i] || '';
+    const codeFormatted = code
+      ? escapeHTML(code.substring(0, 4)) + '<br>' + escapeHTML(code.substring(4, 8)) + '<br>' + escapeHTML(code.substring(8))
+      : '<span class="missing">Ingen kode</span>';
+    rows += `<tr>
+      <td>${i + 1}</td>
+      <td>${name}</td>
+      <td>${postnr}</td>
+      <td>${sted}</td>
+      <td class="code-cell">${codeFormatted}</td>
+    </tr>`;
+  });
+
+  const html = `<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<title>Shiply – mottakerliste</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+    color: #1a1a1a;
+    padding: 32px 40px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .meta {
+    font-size: 10px;
+    color: #666;
+    text-align: right;
+    line-height: 1.6;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
+    border-bottom: 2px solid #1a1a1a;
+    white-space: nowrap;
+  }
+  td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: #f5f3f0; }
+  .code-cell {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .missing { color: #c45a2d; font-style: italic; font-weight: normal; }
+  @media print {
+    body { padding: 16px 20px; }
+    @page { margin: 1.5cm; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Shiply</h1>
+  <div class="meta">
+    Mottakerliste med frimerkekoder<br>
+    ${date}<br>
+    ${state.customerRows.length} mottakere
+  </div>
+</header>
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Navn</th>
+      <th>Postnr</th>
+      <th>Sted</th>
+      <th>Frimerkekode</th>
+    </tr>
+  </thead>
+  <tbody>${rows}</tbody>
+</table>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  window.open(URL.createObjectURL(blob), '_blank');
 }
 
 function loadDemoCodes() {
